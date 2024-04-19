@@ -19,7 +19,12 @@ function switchToState()
     var htmlText = "";
     if (model.pagetype == "SecondPage")
     {
-        htmlText = "<p>No second page yet</p>";
+        //htmlText = "<p>No second page yet</p>";
+        $.ajax("http://127.0.0.1:5500/звукозапись.json",
+            { type:'GET', dataType:'json', success:DataLoaded, error:ErrorHandler }
+        );
+
+        return;
     }
     else
     {
@@ -33,6 +38,46 @@ function switchToState()
     }
 
     area.innerHTML = htmlText;
+}
+
+function DataLoaded(data)
+{
+    console.log('загруженные через AJAX данные:');
+    console.log(data);
+
+    area.innerHTML = "";
+    
+    var table = document.createElement("table");
+    table.border = 1;
+    var header = document.createElement("tr");
+    var col1 = document.createElement("th");
+    col1.textContent = "предмет звукозаписи";
+    header.appendChild(col1);
+
+    var col2 = document.createElement("th");
+    col2.textContent = "описание";
+    header.appendChild(col2);
+    table.appendChild(header);
+    for (var i in data)
+    {
+        var cortezh = document.createElement("tr");
+        var col1 = document.createElement("td");
+        col1.textContent = i;
+        cortezh.appendChild(col1);
+
+        var col2 = document.createElement("td");
+        col2.textContent = data[i];
+        cortezh.appendChild(col2);
+        table.appendChild(cortezh);
+    }
+
+    area.appendChild(table);
+}
+
+function ErrorHandler(jqXHR,StatusStr,ErrorStr)
+{
+    alert(StatusStr+' '+ErrorStr);
+    console.log(StatusStr+' '+ErrorStr);
 }
 
 function makeState(model)
@@ -58,6 +103,3 @@ secPage.addEventListener("click", function()
 
 document.body.appendChild(main);
 document.body.appendChild(secPage);
-//main.setAttribute("type", "button");
-//main.setAttribute("value", "О приложении");
-//main.setAttribute("type", "button");
